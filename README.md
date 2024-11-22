@@ -1,88 +1,73 @@
 
-# RepoScope: Repository Analysis Tool
+# RepoScope
 
-RepoScope is a Spring Boot application designed to analyze Java repositories hosted on GitHub or other Git servers. It clones a repository, processes the Java files, and provides insights on various aspects of the codebase such as class types, methods, loops, conditionals, and method calls.
+RepoScope is a Spring Boot application designed to analyze a Git repository and provide insights into its structure, such as the number of classes, methods, interfaces, abstract classes, and usage of loops and conditionals. It provides a simple REST API to analyze a repository by cloning it and analyzing its Java files.
 
 ## Features
+- Clone a repository from a given URL.
+- Analyze Java files for classes, interfaces, and abstract classes.
+- Count the number of methods and detect loops and conditionals within methods.
+- Expose the analysis results via a REST API.
 
-- **Clone Repositories**: Clone any public Git repository using its URL.
-- **Analyze Code**: Process Java files to gather statistics such as:
-  - Total number of classes and methods
-  - Number of interfaces and abstract classes
-  - Methods containing loops and conditionals
-  - Method call analysis (which methods are calling other methods)
-- **RESTful API**: Expose analysis results through a REST API for integration with other services.
-
-## Requirements
-
-- Java 8 or higher
-- Maven or Gradle (Gradle is used in this project)
+## Prerequisites
+- Java 8 or later
+- Maven 3.6 or later
 - Git
-- JGit library for cloning repositories
-- JavaParser for analyzing Java code
+- An IDE or command-line tools to run Spring Boot applications
 
-## Setup
+## Setup and Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/repository-name.git
-   ```
+1. Clone this repository to your local machine:
+    ```bash
+    git clone https://github.com/yourusername/RepoScope.git
+    ```
 
 2. Navigate to the project directory:
-   ```bash
-   cd repository-name
-   ```
+    ```bash
+    cd RepoScope
+    ```
 
-3. Build the project using Gradle:
-   ```bash
-   ./gradlew build
-   ```
+3. Build the project using Maven:
+    ```bash
+    mvn clean install
+    ```
 
 4. Run the application:
-   ```bash
-   ./gradlew bootRun
-   ```
-
-5. The application will start a Spring Boot server on port `8080` by default.
+    ```bash
+    mvn spring-boot:run
+    ```
 
 ## Usage
 
-The application exposes a REST API endpoint to analyze repositories:
+Once the application is running, you can use the following API endpoint to analyze a repository:
 
-### Endpoint: `/api/repo/analyze`
+### Analyze Repository
 
-- **Method**: `GET`
-- **Parameters**: 
-  - `repoUrl`: The URL of the GitHub (or any Git repository) repository to analyze. (e.g., `https://github.com/suhruth/repository-name`)
-
-- **Response**: A JSON object containing the following data:
-  - `repositoryInfo`: Information about the repository (e.g., name).
-  - `classDetails`: A list of details for each class in the repository (class name, type, methods).
-  - `methodCalls`: A list of method call relationships.
-  - `loopsAndConditionals`: A list of methods that contain loops and conditionals.
-  - `summary`: A summary of the repository (e.g., number of interfaces, abstract classes, methods with loops).
+- **Endpoint**: `GET /api/repo/analyze`
+- **Parameters**: `repoUrl` (URL of the Git repository you want to analyze)
+- **Response**: A JSON object containing repository analysis data.
 
 Example Request:
 ```bash
-curl "http://localhost:8080/api/repo/analyze?repoUrl=https://github.com/yourusername/repository-name"
+curl "http://localhost:8080/api/repo/analyze?repoUrl=https://github.com/spring-projects/spring-boot.git"
 ```
 
-### Example Response:
+Example Response:
 ```json
 {
   "status": "success",
   "data": {
     "repositoryInfo": {
-      "repoName": "repository-name"
+      "repoName": "spring-boot"
     },
     "classDetails": [
       {
-        "className": "ExampleClass",
+        "className": "Application",
         "type": "Regular Class",
         "methods": [
           {
-            "name": "exampleMethod",
-            "containsLoops": true,
+            "name": "main",
+            "containsLoops": false,
             "containsConditionals": false
           }
         ]
@@ -90,52 +75,29 @@ curl "http://localhost:8080/api/repo/analyze?repoUrl=https://github.com/youruser
     ],
     "methodCalls": [
       {
-        "caller": "exampleMethod",
-        "calledMethod": "helperMethod"
+        "caller": "main",
+        "calledMethod": "run"
       }
     ],
-    "loopsAndConditionals": [
-      {
-        "method": "exampleMethod",
-        "loopType": "for loop"
-      }
-    ],
+    "loopsAndConditionals": [],
     "summary": {
-      "abstractClasses": 1,
-      "interfaces": 2,
-      "methodWithLoops": 3,
-      "methodWithConditionals": 2
+      "abstractClasses": 0,
+      "interfaces": 0,
+      "methodWithLoops": 0,
+      "methodWithConditionals": 0
     }
   }
 }
 ```
 
-## Project Structure
+## Dependencies
 
-- **`src/main/java/com/suhruth/reposcope/`**: Contains the main application, controller, and service classes.
-  - **`RepoScopeApplication.java`**: The entry point of the Spring Boot application.
-  - **`controller/RepositoryAnalysisController.java`**: Exposes the `/api/repo/analyze` API endpoint.
-  - **`service/RepositoryAnalysisService.java`**: Contains the core logic for cloning repositories, analyzing Java files, and generating reports.
+This project uses the following dependencies:
 
-- **`src/main/resources/`**:
-  - **`clonedRepo/`**: Temporary directory where repositories are cloned for analysis.
-
-## Technologies Used
-
-- **Spring Boot**: Framework for building the REST API and running the application.
-- **JGit**: Library for cloning and interacting with Git repositories.
-- **JavaParser**: Used to parse and analyze Java files.
-- **SLF4J** with **Logback**: Logging framework used to track the application's progress and errors.
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Commit your changes.
-4. Push to the feature branch.
-5. Open a pull request.
-
-Please make sure to update the README and add tests if applicable.
+- Spring Boot
+- JGit
+- JavaParser
+- SLF4J (for logging)
 
 ## License
 
